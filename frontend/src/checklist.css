@@ -1,0 +1,129 @@
+/* page wrapper */
+.page {
+  background: #f3f3f3;
+  min-height: 100vh;
+  padding: 24px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.paper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 20px 28px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* header */
+.header-block .title {
+  font-size: 28px;
+  margin: 0 0 10px;
+  text-decoration: underline;
+  font-weight: 700;
+}
+.flight-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.flight-left,
+.flight-right {
+  font-weight: 600;
+}
+
+/* flight info table */
+.flight-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+}
+.flight-table td {
+  border: 1px solid #222;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+/* checklist */
+.subhead {
+  font-size: 18px;
+  margin: 8px 0 12px;
+}
+.add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.add-input {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.add-input.small {
+  width: 260px;
+}
+.btn {
+  background: #111;
+  color: #fff;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn.small {
+  padding: 5px 8px;
+  font-size: 13px;
+}
+
+/* table to mimic the PDF layout */
+.checks-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.checks-table th,
+.checks-table td {
+  border: 1px solid #222;
+  padding: 10px;
+  vertical-align: middle;
+}
+.checks-table th {
+  background: #efefef;
+  font-weight: 700;
+  text-align: left;
+}
+.th-check {
+  width: 55%;
+}
+.th-status {
+  width: 12%;
+  text-align: center;
+}
+.th-comments {
+  width: 28%;
+  text-align: center; /* center the header text */
+  vertical-align: middle; /* make sure it's vertically centered */
+}
+.th-actions {
+  width: 12%;
+  text-align: center;
+}
+
+/* inputs inside rows */
+.comment-input {
+  width: 100%;
+  border: 0;
+  padding: 4px;
+  outline: none;
+}
+
+/* smaller text for print */
+@media print {
+  .paper {
+    box-shadow: none;
+    margin: 0;
+  }
+  .btn,
+  .add-row {
+    display: none;
+  } /* hide buttons when printing for cleaner PDF */
+}

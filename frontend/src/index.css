@@ -1,0 +1,59 @@
+/* index.css — global resets and theme */
+:root {
+  --bg: #f3f4f6;
+  --paper: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --danger: #dc2626;
+  --max-width: 980px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+}
+
+/* links & buttons */
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  padding: 0.5rem 0.85rem;
+  border-radius: 6px;
+  background: #111827;
+  color: #fff;
+}
+button:hover { opacity: 0.95; }
+
+/* Utility layout */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 1.5rem auto;
+  padding: 1.25rem;
+}
+.hidden { display: none !important; }
+.muted { color: var(--muted); font-size: 0.95rem; }
+
+/* Print-friendly defaults */
+@media print {
+  body { background: #fff; color: #000; }
+  .container { box-shadow: none; padding: 0; }
+}

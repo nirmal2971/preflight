@@ -1,0 +1,108 @@
+/* app.css — app/paper container and header visuals */
+
+/* Paper card (centered within page, but full-width up to max) */
+.paper {
+  background: var(--paper);
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  padding: 22px 26px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header / Title */
+.header-block .title {
+  font-size: 28px;
+  line-height: 1.05;
+  font-weight: 700;
+  text-decoration: underline;
+  margin: 0 0 10px;
+  color: var(--text);
+}
+
+/* Flight info row (two-column) */
+.flight-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.flight-left, .flight-right {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Flight info table */
+.flight-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+}
+.flight-table td {
+  border: 1px solid #222;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+/* Subhead */
+.subhead {
+  font-size: 18px;
+  margin: 10px 0 12px;
+  font-weight: 700;
+}
+
+/* Controls (Add form, filters) */
+.add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.add-input {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.add-input.small { width: 260px; }
+
+/* Table that mimics PDF */
+.checks-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.checks-table th, .checks-table td {
+  border: 1px solid #222;
+  padding: 10px;
+  vertical-align: middle;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+.checks-table th { background: #efefef; font-weight: 700; text-align: left; }
+
+/* column widths like the PDF */
+.th-check  { width: 55%; }
+.th-status { width: 12%; text-align: center; }
+.th-comments{ width: 28%; }
+.th-actions { width: 5%; text-align: center; }
+
+/* Inputs inside rows */
+.comment-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+}
+
+/* Smaller / muted text */
+.small-muted { color: var(--muted); font-size: 0.9rem; }
+
+/* Print adjustments */
+@media print {
+  .paper { box-shadow: none; border-radius: 0; }
+  button, .add-row { display: none; } /* hide interactive controls when printing */
+}
