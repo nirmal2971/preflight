@@ -11,8 +11,11 @@ RUN npm ci --only=production
 # Copy backend source code
 COPY . .
 
-# Create directory for persistent SQLite database (mounted in cloud)
-RUN mkdir -p /data
+# Ensure the mount directory exists (match your Northflank mount path)
+RUN mkdir -p /mydata
+
+# (Optional) If you plan to run as non-root 'node' user, grant ownership:
+# RUN chown -R node:node /mydata
 
 # Expose API port (cloud platforms map this)
 EXPOSE 3001
