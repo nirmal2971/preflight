@@ -1,77 +1,110 @@
 import React, { useEffect, useState } from "react";
+import * as api from "./api";
 import ChecklistItem from "./ChecklistItem";
-import FlightDialog from "./FlightDialog";
 
 export default function ChecklistPage() {
-  // ✅ Dummy checklist items (Option 1)
-  const [items, setItems] = useState([
-    { id: 1, title: "Check Fuel Quantity", completed: false, description: "OK" },
-    { id: 2, title: "Inspect Engine Oil", completed: true, description: "Completed" },
-    { id: 3, title: "Verify Navigation Systems", completed: false, description: "" },
-    { id: 4, title: "Check Tire Pressure", completed: false, description: "To verify" },
-    { id: 5, title: "Safety Equipment Check", completed: true, description: "Done" }
-  ]);
-
-  // For adding new items (still works offline)
+  const [items, setItems] = useState([]);
   const [newTitle, setNewTitle] = useState("");
   const [newComment, setNewComment] = useState("");
 
-  // Dialog visibility state
-  const [viewOpen, setViewOpen] = useState(false);
+  // NEW STATES
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(""); 
+  const [saving, setSaving] = useState(false); // disable add button
 
-  // ❌ Backend load disabled (you are using dummy data)
-  useEffect(() => {}, []);
+  useEffect(() => {
+    load();
+  }, []);
 
-  // Add new checklist row (local only)
-  function addItem(e) {
+  async function load() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await api.fetchChecks();
+      setItems(data);
+    } catch (err) {
+      setError("Failed to load checklist. Please try again.");
+    }
+
+    setLoading(false);
+  }
+
+  async function addItem(e) {
     e.preventDefault();
     if (!newTitle.trim()) return alert("Title required");
 
-    const newItem = {
-      id: Date.now(),
-      title: newTitle,
-      description: newComment,
-      completed: false
-    };
+    setSaving(true);
+    setError("");
 
-    setItems(prev => [newItem, ...prev]);
-    setNewTitle("");
-    setNewComment("");
+    try {
+      const created = await api.createCheck({
+        title: newTitle,
+        description: newComment
+      });
+
+      setItems(prev => [created, ...prev]);
+      setNewTitle("");
+      setNewComment("");
+    } catch (err) {
+      setError("Failed to create item.");
+    }
+
+    setSaving(false);
   }
 
-  // Toggle checkbox (local only)
-  function toggle(item) {
-    setItems(prev =>
-      prev.map(i =>
-        i.id === item.id
-          ? { ...i, completed: !i.completed }
-          : i
-      )
-    );
+  async function toggle(item) {
+    try {
+      const updated = await api.updateCheck(item.id, {
+        completed: !item.completed
+      });
+
+      setItems(prev => prev.map(i => (i.id === item.id ? updated : i)));
+    } catch (err) {
+      setError("Failed to update status.");
+    }
   }
 
-  // Update comment (local only)
-  function updateField(id, payload) {
-    setItems(prev =>
-      prev.map(i =>
-        i.id === id
-          ? { ...i, ...payload }
-          : i
-      )
-    );
+  async function updateField(id, body) {
+    try {
+      const updated = await api.updateCheck(id, body);
+
+      setItems(prev => prev.map(i => (i.id === id ? updated : i)));
+    } catch (err) {
+      setError("Failed to update comment.");
+    }
   }
 
-  // Delete a row (local only)
-  function remove(id) {
+  async function remove(id) {
     if (!confirm("Delete this check?")) return;
-    setItems(prev => prev.filter(i => i.id !== id));
+
+    try {
+      await api.deleteCheck(id);
+      setItems(prev => prev.filter(i => i.id !== id));
+    } catch (err) {
+      setError("Failed to delete item.");
+    }
   }
 
   return (
     <section className="check-section">
       <h2 className="subhead">Preflight Checks</h2>
 
-      {/* Add row form */}
+      {/* ERROR BOX */}
+      {error && (
+        <div style={{
+          background: "#ffebee",
+          padding: "10px",
+          border: "1px solid #d32f2f",
+          color: "#b71c1c",
+          marginBottom: "10px",
+          borderRadius: "4px"
+        }}>
+          {error}
+        </div>
+      )}
+
+      {/* ADD FORM */}
       <form className="add-row" onSubmit={addItem}>
         <input
           className="add-input"
@@ -85,39 +118,46 @@ export default function ChecklistPage() {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
-        <button className="btn" type="submit">Add</button>
+        <button className="btn" type="submit" disabled={saving}>
+          {saving ? "Adding..." : "Add"}
+        </button>
       </form>
 
-      {/* Checklist table */}
-      <table className="checks-table">
-        <thead>
-          <tr>
-            <th className="th-check">CHECKS</th>
-            <th className="th-status">STATUS</th>
-            <th className="th-comments">COMMENT(S)</th>
-            <th className="th-actions">ACTIONS</th>
-          </tr>
-        </thead>
+      {/* LOADING STATE */}
+      {loading && <p style={{ padding: "12px", fontWeight: "600" }}>⏳ Loading checklist...</p>}
 
-        <tbody>
-          {items.map(item => (
-            <ChecklistItem
-              key={item.id}
-              item={item}
-              onToggle={toggle}
-              onUpdate={updateField}
-              onDelete={remove}
-              onView={() => setViewOpen(true)}
-            />
-          ))}
-        </tbody>
-      </table>
+      {/* EMPTY STATE */}
+      {!loading && items.length === 0 && (
+        <p style={{ padding: "12px", color: "#666" }}>
+          No checks available. Add your first pre-flight check.
+        </p>
+      )}
 
-      {/* View dialog popup */}
-      <FlightDialog
-        open={viewOpen}
-        onClose={() => setViewOpen(false)}
-      />
+      {/* TABLE */}
+      {items.length > 0 && (
+        <table className="checks-table">
+          <thead>
+            <tr>
+              <th className="th-check">CHECKS</th>
+              <th className="th-status">STATUS</th>
+              <th className="th-comments">COMMENT(S)</th>
+              <th className="th-actions">ACTION</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {items.map(item => (
+              <ChecklistItem
+                key={item.id}
+                item={item}
+                onToggle={toggle}
+                onUpdate={updateField}
+                onDelete={remove}
+              />
+            ))}
+          </tbody>
+        </table>
+      )}
     </section>
   );
 }
