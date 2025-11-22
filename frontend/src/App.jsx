@@ -2,7 +2,7 @@ import React from "react";
 import ChecklistPage from "./ChecklistPage";
 import FlightHeader from "./FlightHeader";
 import "./index.css";
-import "./app.css";
+import "./App.css";
 import "./checklist.css";
 
 export default function App() {
